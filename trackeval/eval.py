@@ -7,6 +7,7 @@ from . import utils
 from .utils import TrackEvalException
 from . import _timing
 from .metrics import Count
+from collections import defaultdict
 
 try:
     import tqdm
@@ -152,6 +153,20 @@ class Evaluator:
                         print('\nAll sequences for %s finished in %.2f seconds' % (tracker, time.time() - time_start))
                     output_fol = dataset.get_output_fol(tracker)
                     tracker_display_name = dataset.get_display_name(tracker)
+
+                    seq_summaries = defaultdict(dict)
+                    for c_seq in seq_list:
+                        for c_cls in class_list:
+                            summaries = []
+                            num_dets = res[c_seq][c_cls]['Count']['Dets']
+                            if config['OUTPUT_EMPTY_CLASSES'] or num_dets > 0:
+                                for metric, metric_name in zip(metrics_list, metric_names):
+                                    table_res = {c_seq:res[c_seq][c_cls][metric_name]}
+                                    if config['OUTPUT_SUMMARY']:
+                                        summaries.append(dict(zip(metric.summary_fields, metric._summary_row(table_res[c_seq]))))      
+                            seq_summaries[c_seq][c_cls] = summaries
+
+                    all_summaries = {}
                     for c_cls in res['COMBINED_SEQ'].keys():  # class_list + combined classes if calculated
                         summaries = []
                         details = []
@@ -183,6 +198,10 @@ class Evaluator:
                                 utils.write_summary_results(summaries, c_cls, output_fol)
                             if config['OUTPUT_DETAILED']:
                                 utils.write_detailed_results(details, c_cls, output_fol)
+                        all_summaries[c_cls] = summaries
+
+                    utils.write_summary_results_multicls(all_summaries, res['COMBINED_SEQ'].keys(), output_fol)
+                    utils.write_summary_results_all_seq(seq_summaries, class_list, output_fol)
 
                     # Output for returning from function
                     output_res[dataset_name][tracker] = res
