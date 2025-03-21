@@ -25,5 +25,16 @@
 TRACKERS_TO_EVAL=$1
 TRACKERS_SUB_FOLDER=$2
 
-cd /data/users/litianhao/hsmot_code/TrackEval/
-python scripts/run_hsmot_rgb.py --USE_PARALLEL False --METRICS HOTA CLEAR Identity --TRACKERS_TO_EVAL ${TRACKERS_TO_EVAL} --TRACKER_SUB_FOLDER ${TRACKERS_SUB_FOLDER}
+PWD=$(cd `dirname $0` && pwd)
+cd $PWD/
+
+DATASET=$PWD/../data/HSMOT 
+
+python scripts/run_hsmot_8ch.py \
+    --USE_PARALLEL False \
+    --METRICS HOTA CLEAR Identity \
+    --TRACKERS_TO_EVAL ${TRACKERS_TO_EVAL} \
+    --TRACKER_SUB_FOLDER ${TRACKERS_SUB_FOLDER} \
+    --GT_FOLDER ${DATASET}/test/mot \
+    --IMG_FOLDER ${DATASET}/test/npy \
+    --TRACKERS_FOLDER /data3/litianhao/hsmot 
