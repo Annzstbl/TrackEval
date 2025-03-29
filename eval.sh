@@ -24,6 +24,13 @@
 # 例如 motr/e2e_motr_r50_train_hsmot_rgb_23_l1_mmrotate_interval3 
 TRACKERS_TO_EVAL=$1
 TRACKERS_SUB_FOLDER=$2
+TRACKERS_FOLDER_DEFAULT="/data3/litianhao/hsmot"
+# 检查输入参数数量
+if [ $# -eq 3 ]; then
+    TRACKERS_FOLDER=$3
+else
+    TRACKERS_FOLDER=$TRACKERS_FOLDER_DEFAULT
+fi
 
 PWD=$(cd `dirname $0` && pwd)
 cd $PWD/
@@ -37,4 +44,4 @@ python scripts/run_hsmot_8ch.py \
     --TRACKER_SUB_FOLDER ${TRACKERS_SUB_FOLDER} \
     --GT_FOLDER ${DATASET}/test/mot \
     --IMG_FOLDER ${DATASET}/test/npy \
-    --TRACKERS_FOLDER /data3/litianhao/hsmot 
+    --TRACKERS_FOLDER ${TRACKERS_FOLDER}
