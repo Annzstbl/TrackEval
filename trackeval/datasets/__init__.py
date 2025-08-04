@@ -17,3 +17,4 @@ from .rob_mots import RobMOTS
 from .person_path_22 import PersonPath22
 from .hsmot_rgb import HSMOT_RGB
 from .hsmot_8ch import HSMOT_8ch
+from .hsmot_8ch_occ import HSMOT_8ch_OCC
